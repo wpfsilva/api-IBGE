@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulário de Seleção de Décadas, Estados e Sexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        .aside {
+            width: 300px;
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-content">
+        <h1>Formulário de Seleção de Décadas, Estados e Sexo</h1>
+
+        <form id="decades-states-gender-form">
+            <label for="decade-start">Década Inicial:</label>
+            <select id="decade-start" name="decade-start">
+            </select>
+
+            <label for="decade-end">Década Final:</label>
+            <select id="decade-end" name="decade-end">
+            </select>
+
+            <label for="local">Localidade:</label>
+
+            <select id="local" name="local">
+                <option value="BR">Brasil</option>
+                <option value="AC">Acre</option>
+                <option value="AL">Alagoas</option>
+                <option value="AP">Amapá</option>
+                <option value="AM">Amazonas</option>
+                <option value="BA">Bahia</option>
+                <option value="CE">Ceará</option>
+                <option value="DF">Distrito Federal</option>
+                <option value="ES">Espírito Santo</option>
+                <option value="GO">Goiás</option>
+                <option value="MA">Maranhão</option>
+                <option value="MT">Mato Grosso</option>
+                <option value="MS">Mato Grosso do Sul</option>
+                <option value="MG">Minas Gerais</option>
+                <option value="PA">Pará</option>
+                <option value="PB">Paraíba</option>
+                <option value="PR">Paraná</option>
+                <option value="PE">Pernambuco</option>
+                <option value="PI">Piauí</option>
+                <option value="RJ">Rio de Janeiro</option>
+                <option value="RN">Rio Grande do Norte</option>
+                <option value="RS">Rio Grande do Sul</option>
+                <option value="RO">Rondônia</option>
+                <option value="RR">Roraima</option>
+                <option value="SC">Santa Catarina</option>
+                <option value="SP">São Paulo</option>
+                <option value="SE">Sergipe</option>
+                <option value="TO">Tocantins</option>
+            </select>
+
+            <label for="gender">Sexo:</label>
+            <select id="gender" name="gender">
+                <option value="">Selecione um sexo</option>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+                <option value="">Ambos</option>
+            </select>
+
+            <button type="submit">Enviar</button>
+        </form>
+
+        <div id="chart-container"></div>
+    </div>
+
+    <aside class="aside">
+        <div id="consultas-container"></div>
+    </aside>
+</div>
+
+<script>
+    document.getElementById('decades-states-gender-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var decadeStart = document.getElementById('decade-start').value;
+        var decadeEnd = document.getElementById('decade-end').value;
+        var state = document.getElementById('local').value;
+        var gender = document.getElementById('gender').value;
+
+        if (decadeStart >= decadeEnd) {
+            alert("Erro: Data inicial é maior ou igual que a data final");
+            return;
+        }
+
+        var url = 'http://localhost:8080/consulta/data?dataInicial=' + decadeStart + '&dataFinal=' + decadeEnd + '&localidade=' + state + '&sexo=' + gender;
+
+        fetch(url)
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(response) {
+                carregarConsultas();
+                var jsonData = JSON.stringify(response);
+
+                // Criando um novo FormData e adicionando a string JSON
+                var formData = new FormData();
+                formData.append('dados', jsonData);
+
+                // Enviando o formulário para a página desejada
+                var formAction = 'http://localhost:1208/grafico/index.php';
+                var formMethod = 'POST';
+
+                var form = document.createElement('form');
+                form.action = formAction;
+                form.method = formMethod;
+
+                // Adicionando cada parâmetro do FormData ao formulário
+                for (var pair of formData.entries()) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = pair[0];
+                    input.value = pair[1];
+                    form.appendChild(input);
+                }
+
+                // Adicionando o formulário à página e submetendo-o
+                document.body.appendChild(form);
+                form.submit();
+            })
+            .catch(function(error) {
+                console.error('Erro na requisição:', error);
+            });
+    });
+
+    function carregarConsultas() {
+        fetch('http://localhost:8080/consulta')
+            .then(response => response.json())
+            .then(data => exibirConsultas(data))
+            .catch(error => console.error('Erro ao carregar consultas:', error));
+    }
+
+    function exibirConsultas(consultas) {
+        const container = document.getElementById('consultas-container');
+        container.innerHTML = '';
+
+        console.log(consultas);
+
+        consultas.forEach(consulta => {
+            const consultaDiv = document.createElement('div');
+            consultaDiv.innerHTML = `
+          <p>Consulta n ${consulta.id} = Consulta Inicial: ${consulta.dataInicial}, Consulta Final ${consulta.dataFinal}, Localidade: ${consulta.localidade}, Sexo: ${consulta.sexo} </p>
+          <button onclick="excluirConsulta(${consulta.id})">Excluir</button>
+        `;
+            container.appendChild(consultaDiv);
+        });
+    }
+
+    function excluirConsulta(consultaId) {
+        fetch(`http://localhost:8080/consulta/${consultaId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro ao excluir consulta: ${response.status} - ${response.statusText}`);
+                }
+                return null;
+            })
+            .then(() => {
+                carregarConsultas();
+            })
+            .catch(error => console.error(error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectElementStart = document.getElementById('decade-start');
+        var selectElementEnd = document.getElementById('decade-end');
+
+        for (var decade = 1930; decade <= 2010; decade += 10) {
+            var optionStart = document.createElement('option');
+            optionStart.value = decade;
+            optionStart.text = decade;
+            selectElementStart.add(optionStart);
+
+            var optionEnd = document.createElement('option');
+            optionEnd.value = decade;
+            optionEnd.text = decade;
+            selectElementEnd.add(optionEnd);
+        }
+
+        carregarConsultas();
+    });
+</script>
+
+</body>
+
+</html>
