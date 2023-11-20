@@ -1,12 +1,25 @@
 # API IBGE
-<p>Essa api consome os dados do IBGE e realiza um gráfico animado sobre a taxa de natalidade </p>
-## Modo de uso:
-<p>Ter um servidor Apache na porta 1208</p>
-<p>Mover grafico pra dentro da pasta do servidor web/www/xampp</p>
-<p>Acessa pelo IP local na porta 8080</p>
-<p>Se houver algum bug no preenchimento dos estados, em main>java>com>FGRW>tfpi>config>WebConfig.java</p>
-<p>Altere:<code>.allowedOrigins(servidor)</code> para: <code>.allowedOrigins("*")</code></p>
-<p>Não se esqueça, onde tiver variavel com servidor, alterar pro IP LOCAL ou IP Público</p>
 
-<p>Projeto desenvolvido por:</p>
-<p><b> Waldemar Silva </b>, <b>Rhuan Flores</b>, <b>Gabriel Gama</b>, <b>Felipe Melidas</b></p>
+Esta API consome os dados do IBGE e gera um gráfico animado sobre a taxa de natalidade.
+
+## Modo de Uso:
+
+1. Certifique-se de ter um servidor Apache em execução na porta 1208.
+2. Mova a pasta do gráfico para o diretório do servidor web/www/xampp.
+3. Acesse a aplicação pelo IP local na porta 8080.
+4. Se houver algum bug no preenchimento dos estados, vá para `main > java > com > FGRW > tfpi > config > WebConfig.java`.
+5. Altere:
+    ```java
+    .allowedOrigins(servidor)
+    ```
+    para:
+    ```java
+    .allowedOrigins("*")
+    ```
+6. Não se esqueça de ajustar qualquer variável com referência ao servidor para o IP local ou IP público.
+
+Projeto desenvolvido por:
+- **Waldemar Silva**
+- **Rhuan Flores**
+- **Gabriel Gama**
+- **Felipe Melidas**
