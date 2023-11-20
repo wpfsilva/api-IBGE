@@ -6,6 +6,7 @@
 <p>Acessa pelo IP local na porta 8080</p>
 <p>Se houver algum bug no preenchimento dos estados, em main>java>com>FGRW>tfpi>config>WebConfig.java</p>
 <p>Altere:<code>.allowedOrigins(servidor)</code> para: <code>.allowedOrigins("*")</code></p>
+<p>Não se esqueça, onde tiver variavel com servidor, alterar pro IP LOCAL ou IP Público</p>
 
 <p>Projeto desenvolvido por:</p>
 <p><b> Waldemar Silva </b>, <b>Rhuan Flores</b>, <b>Gabriel Gama</b>, <b>Felipe Melidas</b></p>
