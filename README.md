@@ -1,5 +1,5 @@
 # API IBGE
-
+<p>Essa api consome os dados do IBGE e realiza um gráfico animado sobre a taxa de natalidade </p>
 ## Modo de uso:
 <p>Ter um servidor Apache na porta 1208</p>
 <p>Mover grafico pra dentro da pasta do servidor web/www/xampp</p>
