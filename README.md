@@ -1,6 +1,6 @@
 # API IBGE
 
-Esta API consome os dados do IBGE e gera um gráfico animado sobre a taxa de natalidade.
+Esta API consome os dados do IBGE e gera um gráfico animado sobre os nomes das pessoas.
 
 ## Modo de Uso:
 
